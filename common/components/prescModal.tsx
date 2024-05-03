@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { UsersStateContext } from 'contexts/users-settings';
 import { useContext, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -14,8 +15,36 @@ const PrescModel: React.FC<ModalProps> = ({ onClose, userId }) => {
   const { isHost } = useContext(UsersStateContext);
   const { streams, names } =
     useContext(UsersStateContext);
+  // Assuming userId is the patient's email
   const usersEntries = Object.entries(streams);
   useEffect(() => {
+    if (!isHost) {
+      axios.post('/api/prescription', {
+        userId,
+      }).then((response) => {
+        setInputValue(response.data.prescription);
+      }).catch((error) => {
+        console.error('Error:', error);
+      });
+    }
+    if (isHost) {
+      const docId = localStorage.getItem('docId');
+      const token = localStorage.getItem('token');
+      if (docId && token) {
+        const patientEmail = names[usersEntries[0][0]];
+        const change = false;
+        axios.post('/api/prescription', {
+          docId,
+          token,
+          change,
+          patientEmail,
+        }).then((response) => {
+          setInputValue(response.data.prescription);
+        }).catch((error) => {
+          console.error('Error:', error);
+        });
+      }
+    }
     setMounted(true);
     return () => setMounted(false);
   }, []);
@@ -24,11 +53,36 @@ const PrescModel: React.FC<ModalProps> = ({ onClose, userId }) => {
     setInputValue(e.target.value);
   };
 
-  const handleSave = () => {
-    console.log('Input value:', inputValue);
-    setEditMode(false);
+  const handleSave = async () => {
+    try {
+      if (isHost) {
+        const docId = localStorage.getItem('docId');
+        const token = localStorage.getItem('token');
+
+        if (docId && token) {
+          const change = editMode ? true : false;
+          const prescription = editMode ? inputValue : '';
+          const patientEmail = names[usersEntries[0][0]]; // Assuming userId is the patient's email
+
+          const response = await axios.post('/api/prescription', {
+            docId,
+            token,
+            change,
+            prescription,
+            patientEmail,
+          });
+
+          console.log('Response:', response.data);
+        } else {
+          console.error('docId or token not found in localStorage');
+        }
+      }
+      setEditMode(false);
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
-  
+
   return mounted
     ? createPortal(
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
