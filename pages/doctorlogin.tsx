@@ -33,6 +33,8 @@ const LoginPage = () => {
       }
       if (response.data.status === "ok") {
         // Handle successful login
+        localStorage.setItem('docId', response.data.docId);
+        localStorage.setItem('token', response.data.token);
         createRoom(response.data.docId);
       }
       // Handle successful login

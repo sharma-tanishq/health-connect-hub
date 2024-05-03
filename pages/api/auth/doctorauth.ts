@@ -15,7 +15,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             if (doctor.password !== encpwd) {
                 return res.status(400).json({ error: "Invalid credentials" });
             }
-            res.status(200).json({ "status": "ok" , "docId": doctor.docId});
+            res.status(200).json({ "status": "ok" , "docId": doctor.docId, 'token': encpwd});
         } else {
             res.status(400).json({ error: "This method is not allowed" });
         }
