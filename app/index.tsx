@@ -13,17 +13,21 @@ import { toast, ToastContainer } from 'react-toastify';
 import { LoaderError, Modal } from '@common/components';
 import { FAILURE_MSG, LOADER_PEER_MSG, TOAST_PROPS } from '@common/constants';
 import { Kind, PeerId } from '@common/types';
-import PrescModel from '@common/components/prescModal';
+import PrescModal from '@common/components/prescModal';
+import ReportModal from '@common/components/reportModal';
 import { useUser } from '@auth0/nextjs-auth0';
-
-
 
 export default function App({ stream }: { stream: MediaStream }) {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
-  const userId = useUser().user!.sub || "";
+  const [showReportModal, setShowReportModal] = useState(false);
+  const userId = useUser().user!.sub || '';
   const toggleModal = () => {
     setShowModal(!showModal);
+  };
+
+  const toggleReportModal = () => {
+    setShowReportModal(!showReportModal);
   };
 
   const socket = useContext(SocketContext);
@@ -141,6 +145,8 @@ export default function App({ stream }: { stream: MediaStream }) {
 
             <div className="flex items-center">
               <ControlPanel
+                toggleReport={toggleReportModal}
+                report={showReportModal}
                 togglePrescription={toggleModal}
                 prescription={showModal}
                 visible={visible}
@@ -154,7 +160,8 @@ export default function App({ stream }: { stream: MediaStream }) {
           </UsersConnectionProvider>
         </div>
         {/* <button onClick={toggleModal}>Open Modal</button> */}
-      {showModal && <PrescModel onClose={toggleModal} userId={userId}  />}
+        {showModal && <PrescModal onClose={toggleModal} userId={userId} />}
+        {showReportModal && <ReportModal onClose={toggleReportModal} />}
         <Modal
           title={
             modal === 'chat'
