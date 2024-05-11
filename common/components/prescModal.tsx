@@ -136,14 +136,14 @@ const PrescModal: React.FC<ModalProps> = ({ onClose, userId }) => {
                 editMode ? (
                   <button
                     onClick={handleSave}
-                    className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+                    className="p-3 rounded-xl text-white bg-slate-800 hover:bg-emerald-700 m-2"
                   >
                     Save
                   </button>
                 ) : (
                   <button
                     onClick={() => setEditMode(true)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+                    className="p-3 rounded-xl text-white bg-slate-800 hover:bg-emerald-700 m-2"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -164,7 +164,7 @@ const PrescModal: React.FC<ModalProps> = ({ onClose, userId }) => {
               ) : null}
               <button
                 onClick={fetchPrescription}
-                className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+                className="p-3 rounded-xl text-white bg-slate-800 hover:bg-emerald-700 m-2"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -183,7 +183,7 @@ const PrescModal: React.FC<ModalProps> = ({ onClose, userId }) => {
               </button>
               <button
                 onClick={onClose}
-                className="bg-red-500 text-white px-4 py-2 rounded"
+                className="p-3 rounded-xl text-white bg-slate-800 hover:bg-emerald-700 m-2"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

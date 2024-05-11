@@ -38,7 +38,7 @@ const Home: React.FC<DoctorListProps> = ({ doctors }) => {
       router.events.off('routeChangeComplete', handleRouteChange);
     };
   }, [router]);
-  
+
   useEffect(() => {
     //clear local storage
     window.localStorage.clear();
@@ -62,26 +62,23 @@ const Home: React.FC<DoctorListProps> = ({ doctors }) => {
     <>
       <Header />
       <WelcomeContainer>
-        <button
-          onClick={createRoom}
-          className="p-3 bg-emerald-300 hover:bg-indigo-200 rounded-md text-emerald-800 text-sm founded-medium"
-        >
-          Create Meet
-        </button>
-        <input
-          onChange={(e: any) => setRoomId(e.target.value)}
-          placeholder="Enter or paste room id"
-          className="px-4 py-1 w-80 rounded-md"
-        />
-        <button
-          onClick={joinRoom2}
-          disabled={roomId.length === 0}
-          className="p-3 bg-emerald-500 hover:bg-indigo-300 rounded-md text-emerald-800 text-sm founded-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
-        >
-          Join
-        </button>
+        <div></div>
       </WelcomeContainer>
+      <div className='mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28'>
+
+        <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+          <span className="block text-gray-800 xl:inline">
+            Meet Our Doctors.
+          </span>{' '}
+          <span className="block text-emerald-500 xl:inline">
+            Connect & Heal.
+          </span>
+        </h1>
+        <div className='my-2'>
+
       <DoctorList doctors={doctors} joinRoom={joinRoom} />
+        </div>
+      </div>
     </>
   );
 };
