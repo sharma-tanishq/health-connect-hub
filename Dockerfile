@@ -1,24 +1,19 @@
-# Use the official Node.js image as the base image
-FROM node:20-alpine
+FROM node:20-alpine AS build
 
-# Set the working directory
 WORKDIR /app
-
-# Copy package.json and package-lock.json (or yarn.lock)
 COPY package*.json ./
-
-# Install dependencies
-RUN npm install --production
-RUN yarn add --dev typescript @types/react
-
-# Copy the entire project
+RUN npm ci
 COPY . .
-
-# Build the Next.js app
 RUN npm run build
 
-# Expose the port the app will run on
-EXPOSE 3000
+FROM node:20-alpine AS runtime
 
-# Start the app
-CMD ["npm", "start", "-p", "3000"]
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/public ./public
+
+EXPOSE 3000
+USER node
+CMD ["npm", "start"]
