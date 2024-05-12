@@ -1,11 +1,7 @@
 import axios from 'axios';
-import Web3 from 'web3';
 import { UsersStateContext } from 'contexts/users-settings';
 import { useContext, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import PrescriptionContract from "./contract.json"
-
-const web3 = new Web3('http://127.0.0.1:7545');
 
 interface ModalProps {
   onClose: () => void;
@@ -74,19 +70,6 @@ const PrescModal: React.FC<ModalProps> = ({ onClose, userId }) => {
     setInputValue(e.target.value);
   };
 
-  const fetchBlockchainPrescription = async (docId: string) => {
-    try {
-      const contract = new web3.eth.Contract(
-        PrescriptionContract.abi,
-        PrescriptionContract.address
-      );
-      const prescription = await contract.methods.getPrescription(docId).call();
-      console.log('Prescription from blockchain:', prescription);
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
   const handleSave = async () => {
     try {
       if (isHost) {
@@ -105,18 +88,7 @@ const PrescModal: React.FC<ModalProps> = ({ onClose, userId }) => {
             prescription,
             patientEmail,
           });
-
-          const accounts = await web3.eth.getAccounts();
-          const contract = new web3.eth.Contract(
-            PrescriptionContract.abi,
-            PrescriptionContract.address
-          );
-          await contract.methods
-            .savePrescription(docId, prescription, patientEmail)
-            .send({ from: accounts[0], gas: "1000000" });
-
           console.log('Response:', response.data);
-          fetchBlockchainPrescription(docId);
         } else {
           console.error('docId or token not found in localStorage');
         }
