@@ -33,15 +33,81 @@ const AdminPage: React.FC = () => {
     });
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const compressImage = (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+  
+      reader.onload = () => {
+        const img = new Image();
+        img.src = reader.result as string;
+  
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 700; // Set the desired maximum width for the compressed image
+          const MAX_HEIGHT = 900; // Set the desired maximum height for the compressed image
+          let width = img.width;
+          let height = img.height;
+  
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+  
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+  
+            ctx.canvas.toBlob(
+              (blob) => {
+                if (blob) {
+                  resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                } else {
+                  reject(new Error('Failed to create compressed image blob'));
+                }
+              },
+              'image/jpeg',
+              0.7 // Adjust the quality value between 0 and 1 (1 being the highest quality)
+            );
+          } else {
+            reject(new Error('Failed to get canvas context'));
+          }
+        };
+  
+        img.onerror = () => {
+          reject(new Error('Failed to load the image'));
+        };
+      };
+  
+      reader.onerror = () => {
+        reject(new Error('Failed to read the image file'));
+      };
+    });
+  };
+
+  const handleChange = async(e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
     if (name === 'adminKey') {
       setAdminKey(value);
       return;
     }
     if (name === 'photo') {
-      const file = files ? files[0] : null;
+      let file = files ? files[0] : null;
       if (file) {
+        try {
+          file = await compressImage(file);
+        } catch (err) {
+          console.error('Error compressing image:', err);
+        }
         getBase64(file).then((base64String) => {
           setFormData((prevState) => ({ ...prevState, [name]: base64String }));
         });
