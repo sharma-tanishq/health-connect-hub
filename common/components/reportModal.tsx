@@ -68,7 +68,7 @@ const ReportModal: React.FC<ModalProps> = ({ onClose }) => {
   const handleSave = async () => {
     try {
       if (pdfFile) {
-        const patientEmail = names[usersEntries[0][0]]; // Assuming userId is the patient's email
+        const patientEmail = isHost ? names[usersEntries[0][0]] : userEmail; // Assuming userId is the patient's email
 
         const accounts = await web3.eth.getAccounts();
         const contract = new web3.eth.Contract(
