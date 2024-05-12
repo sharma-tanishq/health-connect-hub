@@ -6,11 +6,7 @@ import { createPortal } from 'react-dom';
 import ReportContract from './contract.json';
 import { useUser } from '@auth0/nextjs-auth0';
 
-const web3 = new Web3('http://127.0.0.1:7545');
-const ipfshost = '/ip4/127.0.0.1/tcp/5001';
-const ipfs = create({
-  url: ipfshost,
-});
+const web3 = new Web3('https://ganache-syzu.onrender.com');
 
 interface ModalProps {
   onClose: () => void;
@@ -51,7 +47,7 @@ const ReportModal: React.FC<ModalProps> = ({ onClose }) => {
         for (let i = 0; i < (reportdata[2] as any).length; i++) {
           fileNames.push({
             name: reportdata[2][i],
-            url: (reportdata[0][i] as string).replace(`${ipfshost}/ipfs/`, ''),
+            url: reportdata[0][i],
           });
         }
         setFileNames(fileNames);
@@ -79,9 +75,14 @@ const ReportModal: React.FC<ModalProps> = ({ onClose }) => {
           ReportContract.abi,
           ReportContract.address
         );
-
-        const fileAdded = await ipfs.add(pdfFile);
-        const reportdata = `${ipfshost}/ipfs/${fileAdded.path}`;
+        const fData = new FormData();
+        fData.append('file', pdfFile);
+        const fileAdded = await fetch("/api/ipfs", {
+          method: "POST",
+          body: fData,
+        });
+        // console.log('fileAdded:', await fileAdded.json());
+        const reportdata = `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${ (await fileAdded.json()).IpfsHash}`;
         console.log('PDF file uploaded to local IPFS:', reportdata);
         await contract.methods
           .saveReport(reportdata, patientEmail, pdfFile.name)
