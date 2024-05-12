@@ -86,7 +86,7 @@ const Home: React.FC<DoctorListProps> = ({ doctors }) => {
 
 export const getServerSideProps = async () => {
   try {
-    const response = await axios.get(`${process.env.AUTH0_BASE_URL}}/api/doctorsmanage`);
+    const response = await axios.get(`${process.env.AUTH0_BASE_URL}/api/doctorsmanage`);
     const doctors: Doctor[] = response.data;
 
     return {
