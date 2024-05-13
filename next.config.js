@@ -1,16 +1,14 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  api: {
-    responseLimit: 'infinity',
+const fs = require('fs');
+const path = require('path');
+
+module.exports = {
+  server: {
+    ssl: {
+      cert: fs.readFileSync(path.join(__dirname, 'server.crt')),
+      key: fs.readFileSync(path.join(__dirname, 'server.key'))
+    }
   },
   typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: true
   },
 }
-
-module.exports = nextConfig
