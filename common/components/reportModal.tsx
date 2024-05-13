@@ -195,7 +195,7 @@ const ReportModal: React.FC<ModalProps> = ({ onClose }) => {
                     {fileNames.map((file, index) => (
                       <li key={index} className="mb-2">
                         <a
-                          href={`http://localhost:8080/ipfs/${file.url}`}
+                          href={`${file.url}`}
                           target="_blank"
                           className="text-blue-500 hover:underline"
                         >
